@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מקורות השראה</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+.logo { /* הוספת הלוגו */
+    width: 75px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+        .back-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 15px;
+            background: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background: #0056b3;
+        }
+        .input-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .add-button {
+            padding: 8px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .add-button:hover {
+            background: #218838;
+        }
+        .source-list {
+            list-style: none;
+            padding: 0;
+        }
+        .source-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .edit-button, .delete-button {
+            cursor: pointer;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="./index.html" class="back-button">חזרה לדף הבית</a>
+<img src="icons/logo.png" alt="לוגו משה חדד" class="logo"> <!-- הוספת הלוגו -->
+
+        <h1>מקורות השראה</h1>
+        <div class="input-group">
+            <input type="text" id="source-name" placeholder="שם המקור">
+            <input type="text" id="source-link" placeholder="קישור">
+            <button class="add-button" onclick="addSource()">הוסף</button>
+        </div>
+        <ul id="source-list" class="source-list"></ul>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            loadSources();
+        });
+
+        function addSource() {
+            let name = document.getElementById("source-name").value;
+            let link = document.getElementById("source-link").value;
+            if (!name || !link) return;
+            
+            let sources = JSON.parse(localStorage.getItem("sources")) || [];
+            sources.push({ name, link });
+            localStorage.setItem("sources", JSON.stringify(sources));
+            
+            document.getElementById("source-name").value = "";
+            document.getElementById("source-link").value = "";
+            loadSources();
+        }
+
+        function loadSources() {
+            let list = document.getElementById("source-list");
+            list.innerHTML = "";
+            let sources = JSON.parse(localStorage.getItem("sources")) || [];
+            
+            sources.forEach((source, index) => {
+                let li = document.createElement("li");
+                li.className = "source-item";
+                li.innerHTML = `
+                    <span><a href="${source.link}" target="_blank">${source.name}</a></span>
+                    <div class="action-buttons">
+                        <span class="edit-button" onclick="editSource(${index})">✏️</span>
+                        <span class="delete-button" onclick="deleteSource(${index})">🗑️</span>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function editSource(index) {
+            let sources = JSON.parse(localStorage.getItem("sources")) || [];
+            let newName = prompt("ערוך את שם המקור", sources[index].name);
+            let newLink = prompt("ערוך את הקישור", sources[index].link);
+            if (newName && newLink) {
+                sources[index] = { name: newName, link: newLink };
+                localStorage.setItem("sources", JSON.stringify(sources));
+                loadSources();
+            }
+        }
+
+        function deleteSource(index) {
+            let sources = JSON.parse(localStorage.getItem("sources")) || [];
+            sources.splice(index, 1);
+            localStorage.setItem("sources", JSON.stringify(sources));
+            loadSources();
+        }
+    </script>
+</body>
+</html>
