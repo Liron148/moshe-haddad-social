@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ביצת רעיונות</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .logo {
+            width: 75px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        h1 {
+            color: #333;
+        }
+        .idea {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .checkbox-container {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+        .checkbox-container img {
+            width: 30px;
+            height: 30px;
+        }
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+        .done {
+            color: green !important;
+            text-decoration: line-through;
+        }
+        .back-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 15px;
+            background: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="./index.html" class="back-button">חזרה לדף הבית</a>
+        <img src="icons/logo.png" alt="לוגו משה חדד" class="logo">
+        <h1>ביצת רעיונות</h1>
+        <div id="ideas-list">
+            <script>
+                for (let i = 1; i <= 40; i++) {
+                    let ideaValue = localStorage.getItem(`idea${i}`) || '';
+                    let isChecked = localStorage.getItem(`checkbox${i}`) === 'true';
+                    
+                    document.write(`
+                        <div class="idea" id="idea${i}">
+                            <input type="text" id="text${i}" placeholder="הכנס רעיון ${i}" value="${ideaValue}" oninput="saveIdea(${i})" class="${isChecked ? 'done' : ''}">
+                            <div class="checkbox-container" onclick="toggleCheck(${i})">
+                                <img src="icons/checkbox_empty.png" alt="ריק">
+                                <img src="icons/checkmark.png" class="checkmark" id="checkmark${i}" ${isChecked ? 'style="display:block;"' : ''}>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                function toggleCheck(id) {
+                    let checkmark = document.querySelector(`#checkmark${id}`);
+                    let inputField = document.querySelector(`#text${id}`);
+                    
+                    if (checkmark.style.display === 'none' || checkmark.style.display === '') {
+                        checkmark.style.display = 'block';
+                        inputField.classList.add("done");
+                        localStorage.setItem(`checkbox${id}`, 'true');
+                    } else {
+                        checkmark.style.display = 'none';
+                        inputField.classList.remove("done");
+                        localStorage.setItem(`checkbox${id}`, 'false');
+                    }
+                }
+
+                function saveIdea(id) {
+                    let ideaText = document.querySelector(`#text${id}`).value;
+                    localStorage.setItem(`idea${id}`, ideaText);
+                }
+            </script>
+        </div>
+    </div>
+</body>
+</html>
