@@ -69,21 +69,29 @@
         <textarea id="notes" class="content-area" placeholder="כתוב כאן כל מה שתרצה..."></textarea>
         <p id="save-status" class="save-status">✅ נשמר!</p>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let notesArea = document.getElementById("notes");
-            let saveStatus = document.getElementById("save-status");
-            
-            // טוען נתונים שנשמרו
-            notesArea.value = localStorage.getItem("extraNotes") || "";
-            
-            // שמירת הנתונים בזמן הקלדה
-            notesArea.addEventListener("input", function() {
-                localStorage.setItem("extraNotes", notesArea.value);
-                saveStatus.style.display = "block";
-                setTimeout(() => saveStatus.style.display = "none", 1000);
-            });
-        });
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const notesArea = document.getElementById("notes");
+        const saveStatus = document.getElementById("save-status");
+        const docRef = doc(db, "pages", "extra");
+
+        async function loadNote() {
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                notesArea.value = docSnap.data().text || "";
+            }
+        }
+
+        async function saveNote() {
+            await setDoc(docRef, { text: notesArea.value });
+            saveStatus.style.display = "block";
+            setTimeout(() => saveStatus.style.display = "none", 1000);
+        }
+
+        notesArea.addEventListener("input", saveNote);
+        document.addEventListener("DOMContentLoaded", loadNote);
     </script>
 </body>
 </html>
